@@ -66,6 +66,7 @@ type="text"
 placeholder="Enter your name"
 value={name}
 onChange={(e)=>setName(e.target.value)}
+autoComplete="name"
 className="w-full pl-12 pr-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent transition-all hover:border-gray-300"
 required
 />
@@ -81,6 +82,7 @@ type="email"
 placeholder="Enter your email"
 value={email}
 onChange={(e)=>setEmail(e.target.value)}
+autoComplete="username"
 className="w-full pl-12 pr-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent transition-all hover:border-gray-300"
 required
 />
@@ -96,6 +98,7 @@ type="password"
 placeholder="Create a password"
 value={password}
 onChange={(e)=>setPassword(e.target.value)}
+autoComplete="new-password"
 className="w-full pl-12 pr-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent transition-all hover:border-gray-300"
 required
 />

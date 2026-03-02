@@ -8,41 +8,42 @@ const authRoutes = require("./routes/authRoutes");
 const userRoutes = require("./routes/userRoutes");
 const problemRoutes = require("./routes/problemRoutes");
 const feedbackRoutes = require("./routes/feedbackRoutes");
+const taskRoutes = require("./routes/taskRoutes");
 
 const app = express();
 
 const DEFAULT_DEV_ORIGINS = ["http://localhost:5173", "http://127.0.0.1:5173"];
+const DEFAULT_PROD_ORIGINS = ["https://nodenotify-dashboard.onrender.com"];
 const envOrigins = (process.env.CORS_ORIGIN || "")
   .split(",")
   .map((origin) => origin.trim())
   .filter(Boolean);
 
-const allowedOrigins =
+const allowedOrigins = new Set(
   process.env.NODE_ENV === "production"
-    ? envOrigins
-    : [...new Set([...DEFAULT_DEV_ORIGINS, ...envOrigins])];
+    ? [...DEFAULT_PROD_ORIGINS, ...envOrigins]
+    : [...DEFAULT_DEV_ORIGINS, ...DEFAULT_PROD_ORIGINS, ...envOrigins]
+);
+
+const corsOptions = {
+  origin: (origin, callback) => {
+    if (!origin) {
+      return callback(null, true);
+    }
+
+    if (allowedOrigins.has(origin)) {
+      return callback(null, true);
+    }
+
+    return callback(new Error("CORS origin not allowed"));
+  },
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+};
 
 app.use(helmet());
-app.use(
-  cors({
-    origin: (origin, callback) => {
-      if (!origin) {
-        return callback(null, true);
-      }
-
-      if (allowedOrigins.includes(origin)) {
-        return callback(null, true);
-      }
-
-      if (process.env.NODE_ENV !== "production" && allowedOrigins.length === 0) {
-        return callback(null, true);
-      }
-
-      return callback(new Error("CORS origin not allowed"));
-    },
-    credentials: true,
-  })
-);
+app.use(cors(corsOptions));
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true }));
 app.get("/", (req, res) => {
@@ -55,6 +56,7 @@ app.get("/", (req, res) => {
 
 app.use("/api/auth", authRoutes);
 app.use("/api/user", userRoutes);
+app.use("/api/tasks", taskRoutes);
 app.use("/api/problems", problemRoutes);
 app.use("/api/feedback", feedbackRoutes);
 
