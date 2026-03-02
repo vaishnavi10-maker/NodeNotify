@@ -59,9 +59,11 @@ app.use("/api/problems", problemRoutes);
 app.use("/api/feedback", feedbackRoutes);
 
 const frontendDistPath = path.resolve(__dirname, "../../front/dist");
+
 if (process.env.NODE_ENV === "production" && fs.existsSync(frontendDistPath)) {
   app.use("/app", express.static(frontendDistPath));
-  app.get("/app/*", (req, res) => {
+
+  app.use((req, res) => {
     res.sendFile(path.join(frontendDistPath, "index.html"));
   });
 }
