@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { User, Mail, Lock, Upload, UserPlus, ArrowRight } from "lucide-react";
+import { User, Mail, Lock, UserPlus, ArrowRight } from "lucide-react";
 import API from "../api/api";
 
 export default function Register(){
@@ -10,38 +10,29 @@ const navigate = useNavigate();
 const [name,setName] = useState("");
 const [email,setEmail] = useState("");
 const [password,setPassword] = useState("");
-const [profilePic,setProfilePic] = useState(null);
 
 const handleSubmit = async(e)=>{
 
 e.preventDefault();
 
-const data = new FormData();
+try {
+  const res = await API.post("/auth/register", {
+    name,
+    email,
+    password
+  });
 
-data.append("name",name);
-data.append("email",email);
-data.append("password",password);
-data.append("profilePic",profilePic);
-
-const res = await API.post(
-"/auth/register",
-data,
-{
-headers: {
-"Content-Type": "multipart/form-data"
+  localStorage.setItem("token", res.data.token);
+  navigate("/dashboard");
+} catch (error) {
+  alert(error.response?.data?.error || "Registration failed");
 }
-}
-);
-
-localStorage.setItem("token",res.data.token);
-
-navigate("/dashboard");
 
 };
 
 return(
 
-<div className="flex items-center justify-center min-h-screen bg-linear-to-br from-gray-50 to-gray-100 p-4">
+<div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-4">
 
 <div className="w-full max-w-md">
 
@@ -101,19 +92,6 @@ onChange={(e)=>setPassword(e.target.value)}
 autoComplete="new-password"
 className="w-full pl-12 pr-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent transition-all hover:border-gray-300"
 required
-/>
-</div>
-</div>
-
-<div className="group">
-<label className="text-sm font-medium text-gray-700 mb-2 block">Profile Picture</label>
-<div className="relative">
-<Upload className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-yellow-400 transition-colors pointer-events-none" size={18} />
-<input
-type="file"
-accept="image/*"
-onChange={(e)=>setProfilePic(e.target.files[0])}
-className="w-full pl-12 pr-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent transition-all hover:border-gray-300 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-gray-100 file:text-gray-700 file:cursor-pointer hover:file:bg-gray-200"
 />
 </div>
 </div>
