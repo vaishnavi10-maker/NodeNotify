@@ -31,7 +31,7 @@ const HeroSection = () => {
   useEffect(() => {
     fetchData();
   }, []);
-  useEffect(() => {
+  useEffect(() => {   
     let interval;
 
     if (isRunning) {
