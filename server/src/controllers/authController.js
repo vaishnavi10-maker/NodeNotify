@@ -7,10 +7,18 @@ exports.register = async (req, res) => {
   try {
     const { name, email, password } = req.body;
     
+    if (!name || !email || !password) {
+      return res.status(400).json({ error: "Name, email, and password are required" });
+    }
+    
     let profilePic = null;
-    if (req.file) {
-      const result = await cloudinary.uploader.upload(req.file.path);
-      profilePic = result.secure_url;
+    if (req.file && req.file.path) {
+      try {
+        const result = await cloudinary.uploader.upload(req.file.path);
+        profilePic = result.secure_url;
+      } catch (uploadError) {
+        console.error("Cloudinary upload error:", uploadError);
+      }
     }
     
     const hashed = await bcrypt.hash(password, 10);
@@ -28,8 +36,9 @@ exports.register = async (req, res) => {
       { expiresIn: "7d" }
     );
 
-    res.json({ token, user });
+    res.json({ token, user: { id: user._id, name: user.name, email: user.email } });
   } catch (error) {
+    console.error("Register error:", error);
     res.status(500).json({ error: error.message });
   }
 };
