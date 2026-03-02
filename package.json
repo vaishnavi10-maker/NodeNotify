@@ -4,7 +4,7 @@
   "description": "��#\u0000 \u0000N\u0000o\u0000d\u0000e\u0000N\u0000o\u0000t\u0000i\u0000f\u0000y\u0000\r\u0000 \u0000",
   "main": "index.js",
   "scripts": {
-    "build":"npm install --prefix server && npm install --prefix front && npm run build --prefix front",
+    "build": "npm install --prefix server && npm install --prefix front && npm run build --prefix front",
     "start": "npm run start --prefix server"
   },
   "repository": {
@@ -18,5 +18,8 @@
   "bugs": {
     "url": "https://github.com/vaishnavi10-maker/NodeNotify/issues"
   },
-  "homepage": "https://github.com/vaishnavi10-maker/NodeNotify#readme"
+  "homepage": "https://github.com/vaishnavi10-maker/NodeNotify#readme",
+  "dependencies": {
+    "cloudinary": "^1.41.3"
+  }
 }
