@@ -27,22 +27,22 @@ const allowedOrigins = new Set(
 
 const corsOptions = {
   origin: (origin, callback) => {
-    if (!origin) {
+    if (!origin || allowedOrigins.has(origin)) {
       return callback(null, true);
     }
-
-    if (allowedOrigins.has(origin)) {
-      return callback(null, true);
-    }
-
     return callback(new Error("CORS origin not allowed"));
   },
   credentials: true,
   methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
+  exposedHeaders: ["Content-Length", "X-Request-Id"],
+  preflightContinue: false,
+  optionsSuccessStatus: 204
 };
 
-app.use(helmet());
+app.use(helmet({
+  crossOriginResourcePolicy: { policy: "cross-origin" }
+}));
 app.use(cors(corsOptions));
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true }));
